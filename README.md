@@ -17,7 +17,7 @@ This semi-automated reanalysis pipeline is designed for proband only clinical ex
 The input files are *raw VCF files* and *patient phenotypes in HPO terms*. The final output is a list of *filtered and reanalyzed variants* for manual review.
 
 <center>
-<img src="/mnt/bigData2/collaborators/udn/pengfeil/exome_reanalysis/RMD/Diagram.png" alt=" Figure 1. Semi-automated clinical exome reanalysis workflow" width="700" />
+<img src="~/exome_reanalysis/RMD/Diagram.png" alt=" Figure 1. Semi-automated clinical exome reanalysis workflow" width="700" />
 
 </center>
 The pipeline utilizes several external databases as illustrated in the figure. The sources of these databases are summarized in the table below.
