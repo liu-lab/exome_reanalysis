@@ -41,6 +41,7 @@ The input files are *raw VCF files* and *patient phenotypes in HPO terms*. The f
 <img src="img/Diagram.png" width="700" />
    
 </center>
+
 **Figure 1. Semi-automated clinical exome reanalysis workflow**
 
 The pipeline utilizes several external databases as illustrated in the figure. The sources of these databases are summarized in the table below.
@@ -216,6 +217,7 @@ The MICA (Most Informative Common Ancestor) matrix provides the foundation to co
 <img src="img/MICA.png" width="600" />
 
 </center>
+
 **Figure 2. Computing the Most Informative Common Ancestor (MICA) matrix.** The top left panel of the figure illustrates a simplified ontology of a hypothetical HPO term structure; note that only tree patterns -- as opposed to directed acyclic graph patterns -- are shown; we omit the complexity for simplicity. The MICA algorithm is the same in all cases. In this example, the terms X and Y are compared. The terms in blue (A, B, and C) are considered to be ancestors of the term X, whereas the terms in orange (A, B, and D) are considered to be the ancestor of the term Y. The common ancestors of X and Y are terms A and B. On the top right panel of the figure, all HPO terms and all diseases are laid out in a matrix based on ancestor calculation from the Disease-HPO map. This matrix is used to calculate information content (IC) for each HPO ancestor. In the example from the figure, the common ancestors of X and Y -- A and B, have IC values of 0.29 and 0.69, respectively. Thus, B is considered as the Most Informative Common Ancestor (MICA) of terms X and Y. Using this logic, the MICA for all possible term pairs are calculated to generate the MICA matrix (green matrix in the figure).
 
 
@@ -371,6 +373,7 @@ The input is the Gene-Disease map and the Disease-HPO map. The output is an enum
 <img src="img/Gene-disease-HPO.png" width="350" />
 
 </center>
+
 **Figure 3. Gene-Disease-HPO relationships**
 
 
@@ -469,6 +472,7 @@ compare_term_sets = function(annotated_set, disease_set)
 <img src="img/compare_term_sets.png" width="600" />
 
 </center>
+
 **Figure 4. Comparing HPO term sets from the patient and each disease.** Construct a patient HPO X disease HPO matrix by subsetting from the MICA matrix. For each patient HPO, take the maximum matching score among all disease HPOs, and average the resulting max scores to generate the Resnik similarity score of the patient to the disease. The Resnik score is non-commutative, and therefore an additional step is required. To calculate the symmetrized Resnik scores, transpose the patient-disease matrix and repeat the calculation. The final score is the average of the patient-disease and the disease-patient similarity score. In the example in the figure, the patient presenting HPO terms A and Y is compared to the disease characterized with HPO terms B, X and Y. The symmetrized Resnik score is 0.46.
  
  
