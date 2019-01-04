@@ -238,7 +238,7 @@ hpo_ancestry = hpo$ancestors %>%
 save(hpo_ancestry, file = 'data/output/hpo_ancestry.RData')
 ```
 
-1.  Get the association / mapping between disease and HPO terms. Each disease is represented by a set of HPO terms that indicates the presence of that phenotype for the given disease.
+2.  Get the association / mapping between disease and HPO terms. Each disease is represented by a set of HPO terms that indicates the presence of that phenotype for the given disease.
 
 ``` r
 disease_to_hpo = read_tsv('data/input/phenotype_annotation_hpoteam.tab',
@@ -259,7 +259,7 @@ disease_to_hpo = read_tsv('data/input/phenotype_annotation_hpoteam.tab',
                                     'frequency_description'))
 ```
 
-1.  Calculate the IC for each HPO term. To find the IC of a term, we arrange the disease-to-phenotype data into an n x m binary matrix, where rows are n diseases and columns are all m HPO terms including ancestral terms. A given cell contains the value 1 if a disease is annotated to a branch of the phenotype ontology containing the term, and otherwise we set values to 0. We then calculate the IC of each term (each column of the matrix) using IC(m)= -log(f(m)), where m is an HPO term and the value f(m) is the frequency of the HPO term across all diseases. For a binary matrix, the frequency of a column is given by the average of the column, which is the proportion of rows with the value of 1. Note that the more rare a phenoytpe term is across diseases, the higher the IC of the term. This makes intuitive sense because rare characteristics contain more diagnostic specificity than common characteristics shared by many diseases.
+3.  Calculate the IC for each HPO term. To find the IC of a term, we arrange the disease-to-phenotype data into an n x m binary matrix, where rows are n diseases and columns are all m HPO terms including ancestral terms. A given cell contains the value 1 if a disease is annotated to a branch of the phenotype ontology containing the term, and otherwise we set values to 0. We then calculate the IC of each term (each column of the matrix) using IC(m)= -log(f(m)), where m is an HPO term and the value f(m) is the frequency of the HPO term across all diseases. For a binary matrix, the frequency of a column is given by the average of the column, which is the proportion of rows with the value of 1. Note that the more rare a phenoytpe term is across diseases, the higher the IC of the term. This makes intuitive sense because rare characteristics contain more diagnostic specificity than common characteristics shared by many diseases.
 
 ``` r
 disease_term_mat = disease_to_hpo %>%
@@ -278,7 +278,7 @@ IC_vec = -log(colMeans(disease_term_mat))
 save(IC_vec, file = 'data/output/IC_vec.RData')
 ```
 
-1.  Calculate the MICA (an m x m matrix) entry for each pair of HPO terms. Two major functions are required: *get\_ancestor\_overlap* acquires all the common ancestors for a pair of HPO terms. *get\_max\_ic* calculates MICA using the maximum value of IC vector from the previous step for all candidate common ancestors between a term pair. In the matrix, two special conditions may occur. First, the two terms being compared may be identical, i.e., their relation element appears on the diagnoal line of the matrix. In this case, the *get\_max\_ic* function returns the IC of the term itself. Second, if the the term is not in the disease database and thus not in the IC vector, the *get\_max\_ic* function calls another function called *get\_max\_unannotated\_ic*, which returns the maximum IC of any of its ancestors.
+4.  Calculate the MICA (an m x m matrix) entry for each pair of HPO terms. Two major functions are required: *get\_ancestor\_overlap* acquires all the common ancestors for a pair of HPO terms. *get\_max\_ic* calculates MICA using the maximum value of IC vector from the previous step for all candidate common ancestors between a term pair. In the matrix, two special conditions may occur. First, the two terms being compared may be identical, i.e., their relation element appears on the diagnoal line of the matrix. In this case, the *get\_max\_ic* function returns the IC of the term itself. Second, if the the term is not in the disease database and thus not in the IC vector, the *get\_max\_ic* function calls another function called *get\_max\_unannotated\_ic*, which returns the maximum IC of any of its ancestors.
 
 ``` r
 get_ancestor_overlap = function(id_1, id_2){
@@ -323,7 +323,7 @@ try_get_max_ic = function(id_1, id_2) {
 }
 ```
 
-1.  Complete the generation of the MICA matrix. To accomplish this, generate a matrix with all pairs of HPO terms and then calculate the MICA for all pairs. Save this result to disk for future use.
+5.  Complete the generation of the MICA matrix. To accomplish this, generate a matrix with all pairs of HPO terms and then calculate the MICA for all pairs. Save this result to disk for future use.
 
 ``` r
 ancestor_pairs = combn(hpo_ancestry$ID,2) %>%
@@ -392,7 +392,7 @@ entrez_to_hgnc = read_tsv('data/input/entrez_to_hgnc.tsv') %>%
 names(entrez_to_hgnc) = names(entrez_to_hgnc) %>% map_chr(~gsub(' ', '_', .x))
 ```
 
-1.  Merge the Gene-Disease table with the Disease-HPO table.
+2.  Merge the Gene-Disease table with the Disease-HPO table.
 
 ``` r
 dz_gene_db_ref_hpo <- merge(genes_to_diseases, disease_to_hpo, by.x = "disease_id", by.y = "db_reference")
@@ -451,7 +451,7 @@ LoadPhenotypeData = function(Patient_HPO_path)
 }
 ```
 
-1.  **Function to compute the Resnik similarity scores given a set of terms annotated to a patient and a set associated with a disease.** The rationale of this function is illustrated in Figure 4 below.
+2.  **Function to compute the Resnik similarity scores given a set of terms annotated to a patient and a set associated with a disease.** The rationale of this function is illustrated in Figure 4 below.
 
 ``` r
 compare_term_sets = function(annotated_set, disease_set)
@@ -476,7 +476,7 @@ compare_term_sets = function(annotated_set, disease_set)
 **Figure 4. Comparing HPO term sets from the patient and each disease.** Construct a patient HPO X disease HPO matrix by subsetting from the MICA matrix. For each patient HPO, take the maximum matching score among all disease HPOs, and average the resulting max scores to generate the Resnik similarity score of the patient to the disease. The Resnik score is non-commutative, and therefore an additional step is required. To calculate the symmetrized Resnik scores, transpose the patient-disease matrix and repeat the calculation. The final score is the average of the patient-disease and the disease-patient similarity score. In the example in the figure, the patient presenting HPO terms A and Y is compared to the disease characterized with HPO terms B, X and Y. The symmetrized Resnik score is 0.46.
  
  
-1.  **Generate semantic matching score for all disease genes in relation to the patient's phenotypes.** In this function, the patient HPO terms are compared with disease HPO terms with the *compare\_term\_sets* function. The comparison is done for all OMIM gene-diseases as enumerated in the dataframe *dz\_gene\_db\_ref\_hpo*. The output of the function is a .csv file written to the disk with sample ID in the file name. The patient ID and HPO terms are also written into the .csv file content. Each row represents matching of a disease gene to the patient's HPO term sets. Each time an output file is generated, it contains the same number of rows. The rows are sorted by the *PhenoMatch\_score\_max* in descending order.
+3.  **Generate semantic matching score for all disease genes in relation to the patient's phenotypes.** In this function, the patient HPO terms are compared with disease HPO terms with the *compare\_term\_sets* function. The comparison is done for all OMIM gene-diseases as enumerated in the dataframe *dz\_gene\_db\_ref\_hpo*. The output of the function is a .csv file written to the disk with sample ID in the file name. The patient ID and HPO terms are also written into the .csv file content. Each row represents matching of a disease gene to the patient's HPO term sets. Each time an output file is generated, it contains the same number of rows. The rows are sorted by the *PhenoMatch\_score\_max* in descending order.
 
 ``` r
 GeneratePenotypeScores = function(Pt_processed_HPO_data)
@@ -605,7 +605,7 @@ MakeTableFromVCF = function(vcf_path)
 }
 ```
 
-1.  **Function to load phenotype matching data.** This function can load either outputs generated from the PhenoMatcher script module or outputs generated from the PhenoMatcher website.
+2.  **Function to load phenotype matching data.** This function can load either outputs generated from the PhenoMatcher script module or outputs generated from the PhenoMatcher website.
 
 ``` r
 MergePhenotype = function(Variant_table, Phenotype_file_path)
@@ -618,7 +618,7 @@ MergePhenotype = function(Variant_table, Phenotype_file_path)
 }
 ```
 
-1.  **Function to compute monoallelic and biallelic hypothesis and prioritize variants.** One of the function inputs *Parental\_sample\_availability* asks for a *TRUE* or *FALSE* logical vector. This logical vector informs prioritization rules, as is explained below. This function consists of two parts, the **monoallelic genetic hypothesis** and the **biallelic genetic hypothesis**. The definitions of *monoallelic* or *biallelic* inheritance modes are explained above in the **VCF molecular and disease annotation** section.
+3.  **Function to compute monoallelic and biallelic hypothesis and prioritize variants.** One of the function inputs *Parental\_sample\_availability* asks for a *TRUE* or *FALSE* logical vector. This logical vector informs prioritization rules, as is explained below. This function consists of two parts, the **monoallelic genetic hypothesis** and the **biallelic genetic hypothesis**. The definitions of *monoallelic* or *biallelic* inheritance modes are explained above in the **VCF molecular and disease annotation** section.
     -   The **Monoallelic hypothesis** filters for variants that are
         -   located in genes with known monoallelic disease inheritance, and
         -   rare in the ExAC database (&lt;=5 heterozygous counts), or not rare in ExAC (&gt;5 heterozygous counts) but previously classified as pathogenic or likely pathogenic in our internal database, and
