@@ -1,4 +1,4 @@
-setwd("/mnt/bigData2/collaborators/udn/pengfeil/exome_reanalysis/")
+setwd("~/exome_reanalysis/")
 
 library(tidyverse)
 library(parallel)
