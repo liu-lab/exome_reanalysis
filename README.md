@@ -387,7 +387,7 @@ genes_to_diseases = read_tsv('data/input/genes_to_diseases.txt',
                              col_names = c('entrez_gene_id', 'entrez_gene_symbol', 'disease_id'))
 
 entrez_to_hgnc = read_tsv('data/input/entrez_to_hgnc.tsv') %>% 
-  select(`Approved Symbol`, `Entrez Gene ID`)   
+  dplyr::select(`Approved Symbol`, `Entrez Gene ID`)   
 
 names(entrez_to_hgnc) = names(entrez_to_hgnc) %>% map_chr(~gsub(' ', '_', .x))
 ```
