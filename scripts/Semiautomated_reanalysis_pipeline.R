@@ -15,8 +15,8 @@ MakeTableFromVCF = function(vcf_path)
 {
   # Load annotated filtered VCF file from patient, with the readVcf function from the VariantAnnotation R package
   vcf_file <- readVcf(vcf_path)
-  vcf_table <- as.tibble(data.frame(rowRanges(expand(vcf_file)), geno(vcf_file)$GT, 
-                                  geno(vcf_file)$VR, geno(vcf_file)$DP,info(expand(vcf_file)), stringsAsFactors = F))
+  vcf_table <- as.tibble(data.frame(rowRanges(VariantAnnotation::expand(vcf_file)), geno(vcf_file)$GT, 
+                                  geno(vcf_file)$VR, geno(vcf_file)$DP,info(VariantAnnotation::expand(vcf_file)), stringsAsFactors = F))
 
   # Cleaning up and formatting the loaded variant file
   vcf_table$GI  <- sapply(vcf_table$GI, function(x) {paste(x,collapse = ",")})
