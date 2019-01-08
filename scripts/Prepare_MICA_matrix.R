@@ -27,7 +27,6 @@ library(tidyverse)
 library(ontologyIndex)
 library(parallel)
 library(magrittr)
-select = dplyr::select
 
 ############1. get hpo terms and the ancestors for each hpo term
 hpo = get_ontology('data/input/hp.obo',extract_tags = 'everything') ##data-version: releases/2017-12-12
@@ -65,15 +64,15 @@ disease_to_hpo = read_tsv('data/input/phenotype_annotation_hpoteam.tab',
 
 ####build a n*m matrix, where each of n is a unique disease and each of m is a hpo ancestry
 disease_term_mat = disease_to_hpo %>%
-  select(db_name, hpo_id) %>%
+  dplyr::select(db_name, hpo_id) %>%
   unique %>%
   left_join(hpo_ancestry, by = c('hpo_id' = 'ID')) %>%
-  select(-hpo_id) %>%
+  dplyr::select(-hpo_id) %>%
   unnest %>%
   mutate(value = 1) %>%
   unique %>%
   spread(ancestors, value, fill = 0)%>%
-  select(-db_name) %>%
+  dplyr::select(-db_name) %>%
   as.matrix
 
 ####calculate IC using IC(m)= -log(f(m)), where m is a hpo ancestry,
@@ -181,7 +180,7 @@ genes_to_diseases = read_tsv('data/input/genes_to_diseases.txt',
 
 ####get the link for gene symbol-entrez gene id 
 entrez_to_hgnc = read_tsv('data/input/entrez_to_hgnc.tsv') %>% 
-  select(`Approved Symbol`, `Entrez Gene ID`)   # https://www.genenames.org/cgi-bin/download
+  dplyr::select(`Approved Symbol`, `Entrez Gene ID`)   # https://www.genenames.org/cgi-bin/download
 names(entrez_to_hgnc) = names(entrez_to_hgnc) %>% map_chr(~gsub(' ', '_', .x))
 
 dz_gene_db_ref_hpo <- merge(genes_to_diseases, disease_to_hpo, by.x = "disease_id", by.y = "db_reference")
