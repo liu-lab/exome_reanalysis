@@ -6,7 +6,6 @@ library(biomaRt)
 library(magrittr)
 require(VariantAnnotation)
 
-select = dplyr::select
 
 ########## FUNCTIONS ################
 
