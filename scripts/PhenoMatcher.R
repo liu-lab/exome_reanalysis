@@ -4,8 +4,6 @@ library(tidyverse)
 library(parallel)
 library(magrittr)
 
-select = dplyr::select
-
 # loading MICA matrix
 load("data/output/all_hpo_term.RData")
 load("data/output/dz_gene_db_ref_hpo.RData")
@@ -51,7 +49,7 @@ GeneratePenotypeScores = function(Pt_processed_HPO_data)
                           mutate(
                                   Pt_HPO_valid= Pt_HPO_processed,
                                   PhenoMatch_score = compare_term_sets(hpo_id,Pt_HPO_valid )) %>%
-                          select(-hpo_id, -Pt_HPO_valid) %>%
+                          dplyr::select(-hpo_id, -Pt_HPO_valid) %>%
                           group_by(entrez_gene_symbol) %>%
                           arrange(desc(PhenoMatch_score)) %>%
                           mutate(disease_id_max = dplyr::first(disease_id),
