@@ -263,10 +263,10 @@ disease_to_hpo = read_tsv('data/input/phenotype_annotation_hpoteam.tab',
 
 ``` r
 disease_term_mat = disease_to_hpo %>%
-  select(db_name, hpo_id) %>%
+  dplyr::select(db_name, hpo_id) %>%
   unique %>%
   left_join(hpo_ancestry, by = c('hpo_id' = 'ID')) %>%
-  select(-hpo_id) %>%
+  dplyr::select(-hpo_id) %>%
   unnest %>%
   mutate(value = 1) %>%
   unique %>%
@@ -583,8 +583,8 @@ Functions
 MakeTableFromVCF = function(vcf_path)
 {
   vcf_file <- readVcf(vcf_path)
-  vcf_table <- as.tibble(data.frame(rowRanges(expand(vcf_file)), geno(vcf_file)$GT, 
-                                  geno(vcf_file)$VR, geno(vcf_file)$DP,info(expand(vcf_file)), stringsAsFactors = F))
+  vcf_table <- as.tibble(data.frame(rowRanges(VariantAnnotation::expand(vcf_file)), geno(vcf_file)$GT, 
+                                  geno(vcf_file)$VR, geno(vcf_file)$DP,info(VariantAnnotation::expand(vcf_file)), stringsAsFactors = F))
 
   vcf_table$GI  <- sapply(vcf_table$GI, function(x) {paste(x,collapse = ",")})
   vcf_table <- vcf_table %>% mutate_at(.vars = vars(GN,DT,NS,DS,IHM,IHB,PLP,HGMD,HGMD_same_codon,LMDDD), 
