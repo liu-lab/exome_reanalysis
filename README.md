@@ -747,6 +747,6 @@ The semantic phenotype matching code is developed by graduate student Andrew Gha
 
 The Shiny webtool [PhenoMatcher](http://genomicanalysis.research.bcm.edu:3838/PhenoMatcher/) is developed by Xiaofei Song <xiaofei.song@bcm.edu>.
 
-The semi-automated reanalysis pipeline is developed by Dr. Pengfei Liu <pengfei.liu@bcm.edu> and Xiaofei Song. We acknowledge the support provided by Mr. Paul Vandeventer.
+The semi-automated reanalysis pipeline is developed by Dr. Pengfei Liu <pengfei.liu@bcm.edu> and Xiaofei Song. We acknowledge the support provided by Dr. Edward S. Chen and Mr. Paul Vandeventer.
 
 For questions about this package, please contact Dr. Pengfei Liu <pengfei.liu@bcm.edu>.
