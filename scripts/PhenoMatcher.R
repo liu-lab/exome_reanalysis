@@ -2,7 +2,6 @@ setwd("~/exome_reanalysis/")
 
 library(tidyverse)
 library(parallel)
-library(biomaRt)
 library(magrittr)
 
 select = dplyr::select
