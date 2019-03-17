@@ -214,7 +214,7 @@ The MICA (Most Informative Common Ancestor) matrix provides the foundation to co
 -   Generate a matrix of MICA values for downstream calculations
 
 <center>
-<img src="img/MICA.png" width="600" />
+<img src="img/MICA_new.png" width="600" />
 
 </center>
 
